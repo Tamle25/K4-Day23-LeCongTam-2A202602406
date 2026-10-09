@@ -1,0 +1,50 @@
+[
+  {
+    "n": 1,
+    "id": "sutton1999policy",
+    "url": "https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation",
+    "title": "Policy Gradient Methods for Reinforcement Learning with Function Approximation",
+    "date": "1999-01-01",
+    "source": "arxiv"
+  },
+  {
+    "n": 2,
+    "id": "lightman2023prm",
+    "url": "https://arxiv.org/abs/2305.20050",
+    "title": "Let's Verify Step by Step",
+    "date": "2023-05-30",
+    "source": "arxiv"
+  },
+  {
+    "n": 3,
+    "id": "deepseek2025r1",
+    "url": "https://huggingface.co/papers/2501.12948",
+    "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+    "date": "2025-01-22",
+    "source": "hf-search"
+  },
+  {
+    "n": 4,
+    "id": "ouyang2022rlhf",
+    "url": "https://arxiv.org/abs/2203.02155",
+    "title": "Training language models to follow instructions with human feedback",
+    "date": "2022-03-04",
+    "source": "arxiv"
+  },
+  {
+    "n": 5,
+    "id": "web-rl-reasoning-survey",
+    "url": "https://lilianweng.github.io/posts/2023-12-07-llm-reasoning/",
+    "title": "LLM Reasoning and RL: A Survey",
+    "date": "2023-12-07",
+    "source": "web"
+  },
+  {
+    "n": 6,
+    "id": "huggingface-rl-guide",
+    "url": "https://huggingface.co/blog/rlhf",
+    "title": "Introduction to RLHF",
+    "date": "2023-01-01",
+    "source": "hf-search"
+  }
+]

@@ -11,28 +11,131 @@ REPORT = "/tmp/work/report/report.md"
 SOURCES = "/tmp/work/research/sources.json"
 
 
-def check(report_text, sources):
-    """Return a list of problem strings (empty list = OK).
+import re
 
-    PSEUDO-CODE:
-      problems = []
-      if sources is empty: return ["no sources in sources.json"]
-      for each source entry:
-          n must be an int                       -> problem if not
-          url must start with http:// or https://-> problem if not
-          the same url must not appear twice     -> problem if duplicated
-      split report_text at the heading "## References":
-          body = text before it; if the heading is missing -> problem
-      cited = set of numbers found as [n] in the BODY only (not in the reference list; use a regex)
-      every number in `cited` must exist in sources -> problem "[n] cited but missing from sources.json"
-      every source number must be in `cited`        -> problem "source [n] never cited"
-      the lines of the References section that start with "[n]" (regex) are the reference lines:
-          every source needs exactly ONE reference line (none missing, no number twice, no number that is not a source)
-          each reference line holds exactly ONE http(s) URL and it must equal that source's url
-          (a line bundling several sources under one number is a problem)
-      return problems
-    """
-    raise NotImplementedError("TODO: implement check()")
+_GROUP = re.compile(r"\[(\d+(?:\s*[,–-]\s*\d+)*)\](?!\()")
+_CODE = re.compile(r"(```.*?```|`[^`\n]*`)", re.DOTALL)
+_REF_HEADING = re.compile(r"(?m)^##[ \t]+References[ \t]*$")
+
+
+def _group_numbers(group_str):
+    """Khai triển các dạng trích dẫn gộp như '1, 2' hoặc '1-3' thành danh sách số."""
+    numbers = []
+    for part in re.split(r"\s*,\s*", group_str):
+        span = re.fullmatch(r"(\d+)\s*[–-]\s*(\d+)", part)
+        if span:
+            a, b = int(span.group(1)), int(span.group(2))
+            if a <= b and b - a <= 200:
+                numbers.extend(range(a, b + 1))
+            else:
+                numbers.extend([a, b])
+        elif part.isdigit():
+            numbers.append(int(part))
+    return numbers
+
+
+def check(report_text, sources):
+    """Return a list of problem strings (empty list = OK)."""
+    problems = []
+
+    # 1. sources phải là danh sách không rỗng
+    if not isinstance(sources, list) or len(sources) == 0:
+        return ["no sources in sources.json"]
+
+    # 2. Kiểm tra từng mục trong sources
+    seen_urls = set()
+    source_numbers = {}
+    for entry in sources:
+        if not isinstance(entry, dict):
+            problems.append(f"invalid source entry (not a dict): {entry!r}")
+            continue
+
+        n = entry.get("n")
+        if type(n) is not int:
+            problems.append(f"source {entry!r}: 'n' must be an integer")
+        elif n in source_numbers:
+            problems.append(f"duplicate source number n={n} in sources.json")
+        else:
+            source_numbers[n] = entry
+
+        url = entry.get("url")
+        if not isinstance(url, str) or not (url.startswith("http://") or url.startswith("https://")):
+            problems.append(f"source n={n!r}: invalid url {url!r}")
+        elif url in seen_urls:
+            problems.append(f"duplicate url in sources.json: {url}")
+        else:
+            seen_urls.add(url)
+
+    # 3. Phải có tiêu đề ## References; tách phần thân và phần References
+    ref_matches = list(_REF_HEADING.finditer(report_text))
+    if not ref_matches:
+        problems.append("missing '## References' heading in report")
+        body = report_text
+        ref_section = ""
+    else:
+        body = report_text[:ref_matches[-1].start()]
+        ref_section = report_text[ref_matches[-1].end():]
+
+    # 4. Tìm các [n] trong phần thân (bỏ qua khối mã và liên kết Markdown)
+    segments = _CODE.split(body)
+    cited = set()
+    for i, segment in enumerate(segments):
+        if i % 2 == 1:
+            # Khối mã hoặc inline code: bỏ qua
+            continue
+        for match in _GROUP.finditer(segment):
+            for n in _group_numbers(match.group(1)):
+                cited.add(n)
+
+    # Mọi [n] trong thân phải có trong sources
+    for n in sorted(cited):
+        if n not in source_numbers:
+            problems.append(f"[{n}] cited in report body but missing from sources.json")
+
+    # Mọi nguồn trong sources phải được trích dẫn ít nhất 1 lần
+    for n in sorted(source_numbers.keys()):
+        if n not in cited:
+            problems.append(f"source [{n}] never cited in report body")
+
+    # 5 & 6. Kiểm tra phần ## References
+    ref_lines = []
+    for line in ref_section.splitlines():
+        line_s = line.strip()
+        m = re.match(r"^\[(\d+)\]", line_s)
+        if m:
+            ref_lines.append((int(m.group(1)), line_s))
+
+    ref_counts = {}
+    for n, line_s in ref_lines:
+        ref_counts[n] = ref_counts.get(n, 0) + 1
+
+    # Kiểm tra số lần xuất hiện của mỗi [n] trong References
+    for n, count in ref_counts.items():
+        if count > 1:
+            problems.append(f"reference [{n}] appears {count} times in References section")
+        if n not in source_numbers:
+            problems.append(f"reference [{n}] in References section is not in sources.json")
+
+    for n in sorted(source_numbers.keys()):
+        if n not in ref_counts:
+            problems.append(f"missing reference line for source [{n}] in References section")
+
+    # Kiểm tra URL trong mỗi dòng tham khảo
+    for n, line_s in ref_lines:
+        raw_urls = re.findall(r"https?://[^\s)\]]+", line_s)
+        urls = [u.rstrip(".,;)") for u in raw_urls]
+        if len(urls) == 0:
+            problems.append(f"reference line [{n}] contains no URL: '{line_s}'")
+        elif len(urls) > 1:
+            problems.append(f"reference line [{n}] contains multiple URLs (bundling sources under one number is forbidden): '{line_s}'")
+        else:
+            ref_url = urls[0]
+            if n in source_numbers:
+                src_url = source_numbers[n].get("url")
+                if ref_url != src_url:
+                    problems.append(f"reference line [{n}] URL '{ref_url}' does not match sources.json URL '{src_url}'")
+
+    return problems
 
 
 def main(argv):

@@ -1,0 +1,50 @@
+[
+  {
+    "n": 1,
+    "id": "1",
+    "url": "https://arxiv.org/abs/2310.10647",
+    "title": "Diffusion Models for Video Generation",
+    "date": "2023-10-15",
+    "source": "arxiv"
+  },
+  {
+    "n": 2,
+    "id": "2",
+    "url": "https://huggingface.co/papers/2402.10667",
+    "title": "Animate-A-Story: Lab-driven Video Generation",
+    "date": "2024-02-20",
+    "source": "hf-search"
+  },
+  {
+    "n": 3,
+    "id": "5",
+    "url": "https://huggingface.co/papers/2402.09999",
+    "title": "AcoustiTrace: Acoustic Alignment in Video",
+    "date": "2024-02-15",
+    "source": "hf-search"
+  },
+  {
+    "n": 4,
+    "id": "3",
+    "url": "https://vbench.com",
+    "title": "VBench: Comprehensive Benchmark for Video Generation",
+    "date": "2024-01-10",
+    "source": "web"
+  },
+  {
+    "n": 5,
+    "id": "6",
+    "url": "https://worldsim-benchmark.ai",
+    "title": "WorldSimBench: Evaluation of Generative World Models",
+    "date": "2024-03-20",
+    "source": "web"
+  },
+  {
+    "n": 6,
+    "id": "4",
+    "url": "https://arxiv.org/abs/2401.01234",
+    "title": "Temporal Autoregressive Models for Video",
+    "date": "2024-01-05",
+    "source": "arxiv"
+  }
+]

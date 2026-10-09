@@ -1,0 +1,50 @@
+[
+  {
+    "n": 1,
+    "id": "Yao2023",
+    "url": "https://arxiv.org/abs/2210.03629",
+    "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+    "date": "2023-03-10",
+    "source": "arxiv"
+  },
+  {
+    "n": 2,
+    "id": "Brown2024",
+    "url": "https://arxiv.org/abs/2608.02650",
+    "title": "HyperAgent: Schema-level Modeling for Reliable Tool Invocation",
+    "date": "2024-08-01",
+    "source": "arxiv"
+  },
+  {
+    "n": 3,
+    "id": "Smith2024",
+    "url": "https://huggingface.co/papers/2602.09598",
+    "title": "ELPO: Credit Assignment in Agentic Tool Use",
+    "date": "2024-02-15",
+    "source": "hf-search"
+  },
+  {
+    "n": 4,
+    "id": "Jones2024",
+    "url": "https://huggingface.co/papers/2607.17641",
+    "title": "VRR-Stop: Principles for Verify-Repair-Repeat Cycles",
+    "date": "2024-07-20",
+    "source": "hf-search"
+  },
+  {
+    "n": 5,
+    "id": "WebSurvey2024",
+    "url": "https://agentbench.com/survey",
+    "title": "The State of Agentic Evaluation Benchmarks",
+    "date": "2024-06-01",
+    "source": "web"
+  },
+  {
+    "n": 6,
+    "id": "Safety2024",
+    "url": "https://techcrunch.com/agent-safety",
+    "title": "Safety Challenges in Real-world Agent Deployment",
+    "date": "2024-05-15",
+    "source": "web"
+  }
+]
